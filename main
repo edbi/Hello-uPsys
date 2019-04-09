@@ -5,6 +5,7 @@
  * Author : Edvard
  */ 
 
+*HiHi*
 #define F_CPU 16e6
 #include <avr/io.h>
 #include <util/delay.h>
