@@ -1,0 +1,57 @@
+/*
+ * uPsyslab_8.c
+ *
+ * Created: 05.03.2019 08:24:08
+ * Author : Edvard
+ */ 
+
+#define F_CPU 16e6
+#include <avr/io.h>
+#include <util/delay.h>
+
+/* OPPG 1
+int main(void)
+{	
+	DDRB |= (1<<PINB1);
+	TCCR1A |= (1<<WGM11);						//Fast PWM, ICR1 top, update OCR1A at bottom
+	TCCR1B |= (1<<WGM12)|(1<<WGM13);			//Mode 14
+   	TCCR1A |= (1<<COM1A1);						//Clear OC1A on compare match, set on BOTTOM (Non-inverting mode)    
+	TCCR1B |= (1<<CS11);						//8 prescaling on clock
+	ICR1 =  39999;
+    while (1){
+    OCR1A = 899;
+	_delay_ms(1000);
+	OCR1A = 2399;
+	_delay_ms(1000);
+	OCR1A = 4999;
+	_delay_ms(1000);
+	}
+}*/
+
+//OPPG 2
+void adc_init(void);
+
+int main(void)
+{
+	DDRB |= (1<<PINB1);				//Set digital output
+	DDRC &= (0<<PINC0);				//Set analog input
+	adc_init();
+	TCCR1A |= (1<<WGM11);						//Fast PWM, ICR1 top, update OCR1A at bottom
+	TCCR1B |= (1<<WGM12)|(1<<WGM13);			//Mode 14
+	TCCR1A |= (1<<COM1A1);						//Clear OC1A on compare match, set on BOTTOM (Non-inverting mode)
+	TCCR1B |= (1<<CS11);						//8 prescaling on clock
+	ICR1 = 39999;
+	while(1){
+		ADCSRA |= (1<<ADSC);			//Starts conversation with ADC
+		while (ADCSRA & (1<<ADSC)){		//Runs when communicating with ADC
+			OCR1A = 4099 - ADC*3;		
+		}
+	}
+}
+
+void adc_init(void)
+{
+	ADCSRA |= (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);    //Prescaler at 8 so we have an 2GHz clock source
+	ADMUX  |= (1<<REFS0);
+	ADCSRA |= (1<<ADEN);                //Power up the ADC
+}
