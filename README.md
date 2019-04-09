@@ -1,3 +1,3 @@
 # Hello-uPsys
 
-# Git Good
+# Git Gud
